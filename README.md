@@ -1,0 +1,2 @@
+# SRT
+A simple raytracer.
