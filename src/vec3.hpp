@@ -68,10 +68,6 @@ public:
     static vec3 normalize(const vec3 &v);
 };
 
-using point3 = vec3;
-
-std::ostream &operator<<(std::ostream &out, const vec3 &v);
-
 vec3 operator+(double t, const vec3 &v);
 
 vec3 operator-(double t, const vec3 &v);
@@ -79,3 +75,7 @@ vec3 operator-(double t, const vec3 &v);
 vec3 operator*(double t, const vec3 &v);
 
 vec3 operator/(double t, const vec3 &v);
+
+std::ostream &operator<<(std::ostream &out, const vec3 &v);
+
+using point3 = vec3;

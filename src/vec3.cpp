@@ -1,4 +1,5 @@
 #include "vec3.hpp"
+#include "utils.hpp"
 
 #include <cmath>
 
@@ -16,14 +17,12 @@ double vec3::z() const { return values[2]; }
 
 bool vec3::operator==(const vec3 &other) const
 {
-    auto double_eq = [](double a, double b)
-    {
-        return std::abs(a - b) < 1e-12;
+    auto double_eq = [](double a, double b) {
     };
 
-    return double_eq(x(), other.x()) &&
-           double_eq(y(), other.y()) &&
-           double_eq(z(), other.z());
+    return utils::equals(x(), other.x()) &&
+           utils::equals(y(), other.y()) &&
+           utils::equals(z(), other.z());
 }
 
 bool vec3::operator!=(const vec3 &other) const
@@ -156,9 +155,9 @@ double vec3::angle(const vec3 &other) const
     return angle(*this, other);
 }
 
-std::ostream &operator<<(std::ostream &out, const vec3 &v)
+vec3 vec3::normalize(const vec3 &v)
 {
-    return out << '(' << v[0] << ", " << v[1] << ", " << v[2] << ')';
+    return v / v.length();
 }
 
 vec3 operator+(double t, const vec3 &v)
@@ -181,7 +180,7 @@ vec3 operator/(double t, const vec3 &v)
     return v / t;
 }
 
-vec3 vec3::normalize(const vec3 &v)
+std::ostream &operator<<(std::ostream &out, const vec3 &v)
 {
-    return v / v.length();
+    return out << v.x() << " " << v.y() << " " << v.z() << '\n';
 }

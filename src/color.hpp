@@ -2,7 +2,7 @@
 
 using color = vec3;
 
-void write(std::ostream &out, color c)
+void write_color(std::ostream &out, color c)
 {
     out << static_cast<int>(255.999 * c.x()) << ' '
         << static_cast<int>(255.999 * c.y()) << ' '

@@ -10,6 +10,8 @@ add_executable(${PROJECT_NAME}
     src/vec3.cpp
     src/vec3.hpp
     src/color.hpp
+    src/utils.hpp
+    src/ray.hpp
 )
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
