@@ -101,6 +101,18 @@ public:
         else
             return -in_unit_sphere;
     }
+
+    bool near_zero() const
+    {
+        // Return true if the vector is close to zero in all dimensions.
+        const auto s = 1e-8;
+        return (fabs(x()) < s) && (fabs(y()) < s) && (fabs(z()) < s);
+    }
+
+    inline static vec3 reflect(const vec3 &v, const vec3 &n)
+    {
+        return v - n * 2 * dot(v, n);
+    }
 };
 
 vec3 operator+(double t, const vec3 &v);
