@@ -7,11 +7,22 @@ enable_testing()
 
 add_executable(${PROJECT_NAME}
     src/main.cpp
+
     src/vec3.cpp
     src/vec3.hpp
+
+    src/camera.hpp
+
     src/color.hpp
-    src/utils.hpp
+
+    src/hittable_list.hpp
+    src/hittable.hpp
+
     src/ray.hpp
+
+    src/sphere.hpp
+
+    src/utils.hpp
 )
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})

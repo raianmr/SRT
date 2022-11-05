@@ -1,5 +1,7 @@
 #pragma once
 
+#include "utils.hpp"
+
 #include <iostream>
 
 class vec3
@@ -65,7 +67,40 @@ public:
 
     double angle(const vec3 &other) const;
 
-    static vec3 normalize(const vec3 &v);
+    static vec3 unit_vector(const vec3 &v);
+
+    inline static vec3 random()
+    {
+        return {utils::rand(), utils::rand(), utils::rand()};
+    }
+
+    inline static vec3 random(double min, double max)
+    {
+        return {utils::rand(min, max), utils::rand(min, max), utils::rand(min, max)};
+    }
+
+    inline static vec3 random_in_unit_sphere()
+    {
+        while (true)
+        {
+            if (auto p = vec3::random(-1, 1); p.length_squared() < 1)
+                return p;
+        }
+    }
+
+    inline static vec3 random_unit_vector()
+    {
+        return unit_vector(random_in_unit_sphere());
+    }
+
+    inline static vec3 random_in_hemisphere(const vec3 &normal)
+    {
+        vec3 in_unit_sphere = random_in_unit_sphere();
+        if (dot(in_unit_sphere, normal) > 0.0) // In the same hemisphere as the normal
+            return in_unit_sphere;
+        else
+            return -in_unit_sphere;
+    }
 };
 
 vec3 operator+(double t, const vec3 &v);

@@ -1,12 +1,31 @@
 #pragma once
 
 #include <cmath>
+#include <limits>
+#include <memory>
 #include <random>
 
 namespace utils
 {
+    // Usings
 
-    double clamp(double x, double min, double max)
+    using std::make_shared;
+    using std::shared_ptr;
+    using std::sqrt;
+
+    // Constants
+
+    const double infinity = std::numeric_limits<double>::infinity();
+    const double pi = 3.1415926535897932385;
+
+    // Utility Functions
+
+    inline double degrees_to_radians(double degrees)
+    {
+        return degrees * pi / 180.0;
+    }
+
+    inline double clamp(double x, double min, double max)
     {
         if (x < min)
             return min;
@@ -17,17 +36,17 @@ namespace utils
         return x;
     }
 
-    double lerp(double a, double b, double ratio)
+    inline double lerp(double a, double b, double ratio)
     {
         return a * (1.0 - ratio) + b * ratio;
     }
 
-    bool equals(double a, double b)
+    inline bool equals(double a, double b)
     {
         return std::abs(a - b) < 1e-12;
     }
 
-    double rand()
+    inline double rand()
     {
         static auto rd{std::random_device()};
         static auto gen{std::mt19937(rd())};
@@ -36,7 +55,7 @@ namespace utils
         return dist(gen);
     }
 
-    double rand(double min, double max)
+    inline double rand(double min, double max)
     {
         return min + (max - min) * rand();
     }

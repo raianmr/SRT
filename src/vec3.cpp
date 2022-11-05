@@ -1,5 +1,4 @@
 #include "vec3.hpp"
-#include "utils.hpp"
 
 #include <cmath>
 
@@ -155,7 +154,7 @@ double vec3::angle(const vec3 &other) const
     return angle(*this, other);
 }
 
-vec3 vec3::normalize(const vec3 &v)
+vec3 vec3::unit_vector(const vec3 &v)
 {
     return v / v.length();
 }
