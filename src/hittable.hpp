@@ -22,6 +22,7 @@ struct hit_record
     }
 };
 
+// abstract
 class hittable
 {
 public:
