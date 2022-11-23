@@ -1,5 +1,5 @@
 # SRT
-A simple raytracer.
+A simple ray tracer.
 
 # Running locally
 Run something along the lines of 

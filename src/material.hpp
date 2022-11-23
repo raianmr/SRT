@@ -4,6 +4,7 @@
 
 struct hit_record;
 
+// abstract
 struct material
 {
     virtual bool scatter(
@@ -18,6 +19,7 @@ public:
     virtual bool scatter(
         const ray &r_in, const hit_record &rec, color &attenuation, ray &scattered) const override
     {
+        // Normals are assumed to be unit vectors in this implementation
         auto scatter_direction = rec.normal + vec3::random_unit_vector();
 
         // Catch degenerate scatter direction
