@@ -90,6 +90,15 @@ public:
         }
     }
 
+    inline static vec3 random_in_unit_disk()
+    {
+        while (true)
+        {
+            if (auto p = vec3(utils::rand(-1, 1), utils::rand(-1, 1), 0); p.length_squared() < 1)
+                return p;
+        }
+    }
+
     inline static vec3 random_unit_vector()
     {
         return unit_vector(random_in_unit_sphere());
