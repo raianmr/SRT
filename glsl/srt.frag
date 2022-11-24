@@ -3,11 +3,14 @@
 // config
 
 #define MAX_DEPTH 5
-#define N_SAMPLES 10
-#define RAND_SEED 0.0
+#define N_SAMPLES 5
 #define MAX_FLOAT 1e5
 #define MIN_FLOAT 1e-3
+
+#define SPEED     0.2
+#define SCALE_ON  true // not implemented
 #define ROTATE_ON true
+
 
 // constants
 
@@ -20,8 +23,6 @@ uint base_hash(uvec2 p) {
     uint h32 = 1103515245U * ((p.x) ^ (p.y>>3U));
     return h32 ^ (h32 >> 16);
 }
-
-float global_seed = 0.0;
 
 float hash1(inout float seed) {
     uint n = base_hash(floatBitsToUint(vec2(seed+=0.1, seed+=0.1)));
@@ -38,6 +39,12 @@ vec3 hash3(inout float seed) {
     uint n = base_hash(floatBitsToUint(vec2(seed+=0.1, seed+=0.1)));
     uvec3 rz = uvec3(n, n*16807U, n*48271U);
     return vec3(rz & uvec3(0x7fffffffU)) / float(0x7fffffff);
+}
+
+float global_seed = 0.0;
+
+float get_seed(vec2 inp) {
+    return float(base_hash(floatBitsToUint(inp))) / float(0xffffffffU) + iTime;
 }
 
 vec2 random_in_unit_disk(inout float seed) {
@@ -292,7 +299,10 @@ vec3 sky_color(ray r)
     vec3 unit_direction = normalize(r.direction);
     float t = 0.5 * (unit_direction.y + 1.0);
 
-    return (1.0 - t) * vec3(1.0, 1.0, 1.0) + t * vec3(0.5, 0.7, 1.0);
+    vec3 day = vec3(0.5, 0.7, 1.0);
+    vec3 night = vec3(0.0, 0.2, 0.5);
+
+    return (1.0 - t) * vec3(1.0, 1.0, 1.0) + t * mix(day, night, abs(sin(iTime)) * SPEED);
 }
 
 vec3 ray_color(in ray r, int depth) {
@@ -320,22 +330,33 @@ vec3 ray_color(in ray r, int depth) {
 }
 
 void animate(out vec3 lookfrom) {
-    if(ROTATE_ON)
-    {
-        float angle = iTime / 2.0;
-    	mat4 rotation_mat = mat4(
-            cos(angle), 0.0, sin(angle), 0.0,
+    if(ROTATE_ON) {
+        float angle = iTime * SPEED;
+    	mat4 rotation_mat1 = mat4(
+            cos(angle), 0.0, -sin(angle), 0.0,
                    0.0, 1.0,        0.0, 0.0,
-           -sin(angle), 0.0, cos(angle), 0.0,
+            sin(angle), 0.0, cos(angle), 0.0,
                    0.0, 0.0,        0.0, 1.0
         );
+        mat4 rotation_mat2 = mat4(
+             cos(angle), sin(angle), 0.0, 0.0,
+            -sin(angle), cos(angle), 0.0, 0.0,
+                    0.0,        0.0, 1.0, 0.0,
+                    0.0,        0.0, 0.0, 1.0
+        );
     
-    	lookfrom = vec3(rotation_mat * vec4(lookfrom, 1.0));
+    	vec3 transformed = vec3(rotation_mat2 * rotation_mat1 * vec4(lookfrom, 1.0));
+        // prevent camera from going through floor
+        lookfrom = vec3(transformed.x, abs(transformed.y), transformed.z); 
     }
+
+    // if(SCALE_ON) {
+    // ...
+    // }
 }
 
 void mainImage(out vec4 fragColor, in vec2 fragCoord) {
-    global_seed = float(base_hash(floatBitsToUint(fragCoord))) / float(0xffffffffU) + iTime;
+    global_seed = get_seed(fragCoord);
 
     float aspect_ratio = iResolution.x / iResolution.y;
     vec3 lookfrom = vec3(13, 2, 3);
@@ -352,8 +373,7 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
     vec3 color = vec3(0.0);
     for (int s=0; s<N_SAMPLES; s++)
     {
-        // vec2 uv = (fragCoord + hash2(global_seed))/iResolution.xy;
-        vec2 uv = (fragCoord + vec2(2, 3))/iResolution.xy;
+        vec2 uv = (fragCoord + hash2(global_seed))/iResolution.xy;
 
         ray r = get_ray(cam, uv);
         color += ray_color(r, MAX_DEPTH);
